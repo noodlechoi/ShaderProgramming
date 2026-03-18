@@ -2,6 +2,11 @@
 
 uniform float u_Time;
 in vec3 a_Position;
+in float a_Mass;
+in vec2 a_Vel;
+
+const float c_PI = 3.141592;
+const float c_GV = -9.8;
 
 void Sin1()
 {
@@ -29,7 +34,20 @@ void Circle()
 	gl_Position = newPosition;
 }
 
+void Particle()
+{
+	float t = mod(u_Time, 1.0);
+	float tt = t*t;
+	vec4 newPosition;
+	newPosition.x = a_Position.x + t * a_Vel.x;
+	newPosition.y = a_Position.y + t * a_Vel.x + 0.5 * c_GV * tt;
+	newPosition.z = 0;
+	newPosition.w = 1;
+
+	gl_Position = newPosition;
+}
+
 void main()
 {
-	Circle();
+	Particle();
 }
