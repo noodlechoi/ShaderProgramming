@@ -69,6 +69,45 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBOTriangle);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+
+	m_ParticleCount = 10000;
+	CreateParticle(m_ParticleCount);
+}
+
+void Renderer::CreateParticle(const int num)
+{
+	std::vector<float> vertices;
+
+	float centerX = 0;
+	float centerY = 0;
+	float size = 0.1f;
+	float halfSize = size / 2;
+	float mass = 1.0f;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
+		
+	for (int i = 0; i < num; ++i) {
+		float vx = dist(gen);
+		float vy = dist(gen);
+
+		float quad[] = {
+			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy,
+			centerX + halfSize, centerY - halfSize, 0, mass, vx, vy,
+			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy,
+
+			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy,
+			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy,
+			centerX - halfSize, centerY + halfSize, 0, mass, vx, vy,
+		};
+
+		vertices.insert(vertices.end(), quad, quad + 36);
+	}
+	
+	glGenBuffers(1, &m_VBOParticle);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -222,14 +261,14 @@ void Renderer::DrawTriangle()
 	glEnableVertexAttribArray(attribPosition);
 	glEnableVertexAttribArray(attribMass);
 	glEnableVertexAttribArray(attribVel);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
 
 	unsigned int stride{ sizeof(float) * 6 };
 	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid*)0);
 	glVertexAttribPointer(attribMass, 1, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 3));
 	glVertexAttribPointer(attribVel, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 4));
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, m_ParticleCount * 6);
 }
 
 void Renderer::GetGLPosition(float x, float y, float *newX, float *newY)

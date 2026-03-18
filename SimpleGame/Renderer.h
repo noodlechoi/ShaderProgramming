@@ -23,6 +23,7 @@ private:
 	void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 	GLuint CompileShaders(char* filenameVS, char* filenameFS);
 	void CreateVertexBufferObjects();
+	void CreateParticle(const int num);
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 
 	bool m_Initialized = false;
@@ -34,6 +35,8 @@ private:
 	GLuint m_SolidRectShader = 0;
 
 	GLuint m_VBOTriangle = 0;
+	GLuint m_VBOParticle = 0;
 	GLuint m_TriangleShader = 0;
+	int m_ParticleCount = 0;
 };
 

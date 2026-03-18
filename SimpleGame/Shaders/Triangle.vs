@@ -40,7 +40,7 @@ void Particle()
 	float tt = t*t;
 	vec4 newPosition;
 	newPosition.x = a_Position.x + t * a_Vel.x;
-	newPosition.y = a_Position.y + t * a_Vel.x + 0.5 * c_GV * tt;
+	newPosition.y = a_Position.y + t * a_Vel.y + 0.5 * c_GV * tt;
 	newPosition.z = 0;
 	newPosition.w = 1;
 
