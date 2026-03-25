@@ -87,25 +87,27 @@ void Renderer::CreateParticle(const int num)
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+	std::uniform_real_distribution<float> rdist(0.0f, 1.0f);
 	
 	for (int i = 0; i < num; ++i) {
 		float vx = dist(gen);
 		float vy = dist(gen);
 
-		float RV = dist(gen);
-		float RV1 = dist(gen);
+		float RV = rdist(gen);
+		float RV1 = rdist(gen);
+		float RV2 = rdist(gen); // 시험 atrribute 추가
 
 		float quad[] = {
-			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1,
-			centerX + halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1,
-			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1,
+			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1, RV2,
+			centerX + halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1, RV2,
+			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1, RV2,
 
-			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1,
-			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1,
-			centerX - halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1,
+			centerX - halfSize, centerY - halfSize, 0, mass, vx, vy, RV, RV1, RV2,
+			centerX + halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1, RV2,
+			centerX - halfSize, centerY + halfSize, 0, mass, vx, vy, RV, RV1, RV2,
 		};
 
-		vertices.insert(vertices.end(), quad, quad + 48);
+		vertices.insert(vertices.end(), quad, quad + 54);
 	}
 	
 	glGenBuffers(1, &m_VBOParticle);
@@ -263,19 +265,22 @@ void Renderer::DrawTriangle()
 	int attribVel = glGetAttribLocation(m_TriangleShader, "a_Vel");
 	int attribRV = glGetAttribLocation(m_TriangleShader, "a_RV");
 	int attribRV1 = glGetAttribLocation(m_TriangleShader, "a_RV1");
+	int attribRV2 = glGetAttribLocation(m_TriangleShader, "a_RV2");
 	glEnableVertexAttribArray(attribPosition);
 	glEnableVertexAttribArray(attribMass);
 	glEnableVertexAttribArray(attribVel);
 	glEnableVertexAttribArray(attribRV);
 	glEnableVertexAttribArray(attribRV1);
+	glEnableVertexAttribArray(attribRV2);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
 
-	unsigned int stride{ sizeof(float) * 8 };
+	unsigned int stride{ sizeof(float) * 9 };
 	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid*)0);
 	glVertexAttribPointer(attribMass, 1, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 3));
 	glVertexAttribPointer(attribVel, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 4));
 	glVertexAttribPointer(attribRV, 1, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 6));
 	glVertexAttribPointer(attribRV1, 1, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 7));
+	glVertexAttribPointer(attribRV2, 1, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(sizeof(float) * 8));
 
 	glDrawArrays(GL_TRIANGLES, 0, m_ParticleCount * 6);
 }
