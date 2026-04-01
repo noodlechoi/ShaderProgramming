@@ -304,13 +304,13 @@ void Renderer::DrawTriangle()
 
 void Renderer::DrawFS()
 {
-	g_time += 0.0005f;
+	g_time += 0.00005f;
 	//Program select
 	GLuint shader = m_FSShader;
 	glUseProgram(shader);
 
-	//int uTime = glGetUniformLocation(shader, "u_Time");
-	//glUniform1f(uTime, g_time);
+	int uTime = glGetUniformLocation(shader, "u_Time");
+	glUniform1f(uTime, g_time);
 
 	int attribPosition = glGetAttribLocation(shader, "a_Pos");
 	int attribtPos = glGetAttribLocation(shader, "a_tPos");
