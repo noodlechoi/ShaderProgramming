@@ -107,7 +107,58 @@ void CuteFractal()
     FragColor = vec4(finalColor, 1.0);
 }
 
+// 발자국 모양의 거리를 계산하는 함수
+float getFootprintDistance(vec2 center, vec2 uv)
+{
+    vec2 p = uv - center;
+    
+    // 1. 메인 발바닥 (약간 타원형)
+    float mainPad = length(p * vec2(1.0, 1.2)) - 0.04;
+    
+    // 2. 발가락 3개 (작은 원들)
+    float toe1 = length(p - vec2(-0.03, 0.05)) - 0.015;
+    float toe2 = length(p - vec2( 0.0,  0.07)) - 0.015;
+    float toe3 = length(p - vec2( 0.03, 0.05)) - 0.015;
+    
+    // 모든 모양 중 가장 가까운 거리를 선택 (합치기)
+    return min(mainPad, min(toe1, min(toe2, toe3)));
+}
+
+void FootprintDrop()
+{
+    float accum = 0;
+    for(int i = 0; i < 50; ++i) { // 성능을 위해 루프 횟수 조절 (테스트용)
+        float lifeTime = u_DropInfo[i].w;
+        float startTime = u_DropInfo[i].z;
+        float newTime = u_Time - startTime;
+        
+        if(newTime > 0) {
+            float progress = fract(newTime / lifeTime); // 0~1 반복
+            float fade = 1.0 - progress;
+            
+            vec2 center = u_DropInfo[i].xy;
+            
+            // 발자국 모양과의 거리 계산
+            float d = getFootprintDistance(center, v_TPos);
+            
+            // 파동이 밖으로 퍼져나가는 범위
+            float range = progress * 0.15;
+            
+            // 발자국 테두리 근처에서만 빛나게 설정
+            // d가 0에 가까울수록(발자국 안쪽), 그리고 range와 비슷할수록 강해짐
+            float edge = 1.0 - smoothstep(0.0, 0.02, abs(d - range * 0.2));
+            
+            // 기존의 sin 파동 느낌 추가
+            float ripple = pow(abs(sin(d * 100.0 - progress * 20.0)), 8.0);
+            
+            accum += edge * ripple * fade;
+        }
+    }
+    // 발자국이니까 약간 따뜻한 색감이나 흰색으로 출력
+    FragColor = vec4(accum * vec3(1.0, 0.8, 0.9), 1.0);
+}
+
 void main()
 {
-    RainDrop();
+    FootprintDrop();
 }

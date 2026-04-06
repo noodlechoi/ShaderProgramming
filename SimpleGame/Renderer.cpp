@@ -316,7 +316,7 @@ void Renderer::DrawTriangle()
 
 void Renderer::DrawFS()
 {
-	g_time += 0.005f;
+	g_time += 0.0005f;
 	//Program select
 	GLuint shader = m_FSShader;
 	glUseProgram(shader);
