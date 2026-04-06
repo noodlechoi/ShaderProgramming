@@ -41,5 +41,8 @@ private:
 	GLuint m_VBOParticle = 0;
 	GLuint m_TriangleShader = 0;
 	int m_ParticleCount = 0;
+
+	// RainDrop
+	float m_DropPoints[1000 * 4];
 };
 

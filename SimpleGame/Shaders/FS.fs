@@ -4,6 +4,7 @@ layout(location=0) out vec4 FragColor;
 
 in vec2 v_TPos;
 uniform float u_Time;
+uniform vec4 u_DropInfo[1000];	// vec4(x, y, sT, lT)
 
 const float c_PI = 3.141592;
 
@@ -42,13 +43,37 @@ void Circle()
 		FragColor = vec4(0);
 }
 
-void CircleSin()
+void CircleSin()    // 퍼져나가는 이미지에 사용(파동, 레이더)
 {
 	vec2 center = vec2(0.5, 0.5);
 	float time = mod(u_Time, 1.0f);
 	float d = distance(center, v_TPos) - time * 2;
 	float value = abs(sin(d * c_PI * 16));
 	FragColor = vec4(pow(value,	16));
+}
+
+void RainDrop()
+{
+	float accum = 0;
+	for(int i = 0; i < 1000; ++i) {
+		float lifeTime = u_DropInfo[i].w;
+		float startTime = u_DropInfo[i].z;
+		float newTime = u_Time - startTime;
+		if(newTime > 0) {
+			newTime = fract(newTime/lifeTime);
+			float oneMinus = 1 - newTime;
+			float t = newTime * lifeTime;
+
+			vec2 center = u_DropInfo[i].xy;
+			float d = distance(center, v_TPos);
+			float range = t * 0.1;
+			float fade = 30 * clamp(range - d, 0, 1);
+
+			float value = pow(abs(sin(d * 4 * c_PI * 10 - t *15)), 16);
+			accum += value * fade * oneMinus;
+		}
+	}
+	FragColor = vec4(accum);
 }
 
 void CuteFractal()
@@ -84,5 +109,5 @@ void CuteFractal()
 
 void main()
 {
-    CuteFractal();
+    RainDrop();
 }

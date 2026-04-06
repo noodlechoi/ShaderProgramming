@@ -75,8 +75,6 @@ void Renderer::CreateVertexBufferObjects()
 	m_ParticleCount = 1000;
 	CreateParticle(m_ParticleCount);
 
-
-
 	float ndcRect[] = {
 		-1, -1, 0, 0, 1,
 		1, 1, 0, 1, 0,
@@ -89,6 +87,20 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBOFS);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ndcRect), ndcRect, GL_STATIC_DRAW);
+
+	// GenDrop info
+	int index{};
+	for (int i = 0; i < 1000; ++i) {
+		float x = ((float)rand() / (float)RAND_MAX);
+		float y = ((float)rand() / (float)RAND_MAX);
+		float sTime = 3 * ((float)rand() / (float)RAND_MAX);
+		float lTime = ((float)rand() / (float)RAND_MAX);
+
+		m_DropPoints[index++] = x;
+		m_DropPoints[index++] = y;
+		m_DropPoints[index++] = sTime;
+		m_DropPoints[index++] = lTime;
+	}
 }
 
 void Renderer::CreateParticle(const int num)
@@ -304,13 +316,16 @@ void Renderer::DrawTriangle()
 
 void Renderer::DrawFS()
 {
-	g_time += 0.00005f;
+	g_time += 0.005f;
 	//Program select
 	GLuint shader = m_FSShader;
 	glUseProgram(shader);
 
 	int uTime = glGetUniformLocation(shader, "u_Time");
 	glUniform1f(uTime, g_time);
+
+	int uPoints = glGetUniformLocation(shader, "u_DropInfo");
+	glUniform4fv(uPoints, 1000, m_DropPoints);
 
 	int attribPosition = glGetAttribLocation(shader, "a_Pos");
 	int attribtPos = glGetAttribLocation(shader, "a_tPos");
