@@ -1,6 +1,7 @@
 ﻿#version 330
 
 layout(location=0) out vec4 FragColor;
+uniform sampler2D u_RGBTex;
 
 in vec2 v_TPos;
 uniform float u_Time;
@@ -201,7 +202,27 @@ void Flame()
     FragColor = vec4(grey);
 }
 
+void TextureSampling()
+{
+    vec4 c[5];
+
+    float offsetX = 0.01;
+    c[0] = texture(u_RGBTex, vec2(v_TPos.x - offsetX * 2, v_TPos.y));
+    c[1] = texture(u_RGBTex, vec2(v_TPos.x - offsetX * 1, v_TPos.y));
+    c[2] = texture(u_RGBTex, vec2(v_TPos.x - offsetX * 0, v_TPos.y));
+    c[3] = texture(u_RGBTex, vec2(v_TPos.x + offsetX * 1, v_TPos.y));
+    c[4] = texture(u_RGBTex, vec2(v_TPos.x + offsetX * 2, v_TPos.y));
+
+    vec4 sum = vec4(0);
+    for(int i = 0; i < 5; ++i) {
+        sum += c[i];
+    }
+    sum /= 5;
+
+    FragColor = sum;
+}
+
 void main()
 {
-    Flame();
+    TextureSampling();
 }

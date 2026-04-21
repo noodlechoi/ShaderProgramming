@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Renderer.h"
+#include "LoadPng.h"
+#include <assert.h>
 
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
@@ -22,6 +24,14 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
 	m_FSShader = CompileShaders("./Shaders/FS.vs", "./Shaders/FS.fs");
 	
+	// Load Texture
+	m_RgbTexture = CreatePngTexture("./Textures/rgb.png", GL_NEAREST);
+	m_NumsTexture = CreatePngTexture("./Textures/numbers.png", GL_NEAREST);
+	for (int i = 0; i < 10; ++i) {
+		std::string path{ "./Textures/" + std::to_string(i) + ".png" };
+		m_NumTexture[i] = CreatePngTexture((char*)path.c_str(), GL_NEAREST);
+	}
+
 	//Create VBOs
 	CreateVertexBufferObjects();
 
@@ -29,6 +39,29 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	{
 		m_Initialized = true;
 	}
+}
+
+GLuint Renderer::CreatePngTexture(char* filePath, GLuint samplingMethod)
+{
+	//Load Png
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, filePath);
+	if (error != 0) {
+		std::cout << "PNG image loading failed:" << filePath << std::endl;
+		assert(0);
+	}
+
+	GLuint temp;
+	glGenTextures(1, &temp);
+	glBindTexture(GL_TEXTURE_2D, temp);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+		GL_UNSIGNED_BYTE, &image[0]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, samplingMethod);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplingMethod);
+
+	return temp;
 }
 
 bool Renderer::IsInitialized()
@@ -326,6 +359,12 @@ void Renderer::DrawFS()
 
 	int uPoints = glGetUniformLocation(shader, "u_DropInfo");
 	glUniform4fv(uPoints, 1000, m_DropPoints);
+
+	// texture uniform
+	int uRGBTex = glGetUniformLocation(shader, "u_RGBTex");
+	glUniform1i(uRGBTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
 
 	int attribPosition = glGetAttribLocation(shader, "a_Pos");
 	int attribtPos = glGetAttribLocation(shader, "a_tPos");
