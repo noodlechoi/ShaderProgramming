@@ -2,6 +2,9 @@
 
 layout(location=0) out vec4 FragColor;
 uniform sampler2D u_RGBTex;
+uniform sampler2D u_CurrNumTex;
+uniform sampler2D u_NumsTex;
+uniform int u_InputNum;
 
 in vec2 v_TPos;
 uniform float u_Time;
@@ -269,8 +272,32 @@ void TextureQ4()
     FragColor = texture(u_RGBTex, newTex);
 }
 
+void Num()
+{
+    float tx = v_TPos.x;
+    float ty = v_TPos.y;
+    float offsetX = 0;
+    float offsetY = 0;
+    vec2 newTex = vec2(tx + offsetX, ty + offsetY);
+    FragColor = texture(u_CurrNumTex, newTex);
+}
+
+void Nums()
+{
+    int index = u_InputNum;
+    float row = 2.0f;
+    float col = 5.0f;
+
+    float tx = v_TPos.x / col;
+    float ty = v_TPos.y / row;
+    float offsetX = fract(index/col);
+    float offsetY = floor(index / col)/row;
+    vec2 newTex = vec2(tx + offsetX, ty + offsetY);
+    FragColor = texture(u_NumsTex, newTex);
+}
+
 void main()
 {
     //TextureSampling();
-    TextureQ4();
+    Nums();
 }

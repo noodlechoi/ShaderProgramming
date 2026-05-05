@@ -1,7 +1,8 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Renderer.h"
 #include "LoadPng.h"
 #include <assert.h>
+#include <Windows.h>
 
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
@@ -347,6 +348,8 @@ void Renderer::DrawTriangle()
 	glDrawArrays(GL_TRIANGLES, 0, m_ParticleCount * 6);
 }
 
+int g_CurrNum = 0;
+
 void Renderer::DrawFS()
 {
 	g_time += 0.005f;
@@ -357,14 +360,29 @@ void Renderer::DrawFS()
 	int uTime = glGetUniformLocation(shader, "u_Time");
 	glUniform1f(uTime, g_time);
 
-	int uPoints = glGetUniformLocation(shader, "u_DropInfo");
+	int uPoints = glGetUniformLocation(shader, "u_DropInfo"); 
 	glUniform4fv(uPoints, 1000, m_DropPoints);
 
 	// texture uniform
 	int uRGBTex = glGetUniformLocation(shader, "u_RGBTex");
 	glUniform1i(uRGBTex, 0);
+	int uCurrNumTex = glGetUniformLocation(shader, "u_CurrNumTex");
+	glUniform1i(uCurrNumTex, 2 + (g_CurrNum % 10));
+	Sleep(100);
+
+	int uNumsTex = glGetUniformLocation(shader, "u_NumsTex");
+	glUniform1i(uNumsTex, 1);
+	int uInputNum = glGetUniformLocation(shader, "u_InputNum");
+	glUniform1i(uInputNum, g_CurrNum++);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_NumsTexture);
+	for (int i = 0; i < 10; ++i) {
+		glActiveTexture(GL_TEXTURE2 + i);
+		glBindTexture(GL_TEXTURE_2D, m_NumTexture[i]);
+	}
 
 	int attribPosition = glGetAttribLocation(shader, "a_Pos");
 	int attribtPos = glGetAttribLocation(shader, "a_tPos");
