@@ -44,7 +44,7 @@ void Circle()
 		FragColor = vec4(0);
 }
 
-void CircleSin()    // ÆÛÁ®³ª°¡´Â ÀÌ¹ÌÁö¿¡ »ç¿ë(ÆÄµ¿, ·¹ÀÌ´õ)
+void CircleSin()    // í¼ì ¸ë‚˜ê°€ëŠ” ì´ë¯¸ì§€ì— ì‚¬ìš©(íŒŒë™, ë ˆì´ë”)
 {
 	vec2 center = vec2(0.5, 0.5);
 	float time = mod(u_Time, 1.0f);
@@ -79,27 +79,27 @@ void RainDrop()
 
 void CuteFractal()
 {
-    // 1. ÁÂÇ¥°è Áß½É ÀÌµ¿ (-0.5 ~ 0.5)
+    // 1. ì¢Œí‘œê³„ ì¤‘ì‹¬ ì´ë™ (-0.5 ~ 0.5)
     vec2 uv = v_TPos - 0.5;
     vec3 finalColor = vec3(0.0);
     
-    // 2. ÇÁ·¢Å» ¹İº¹ (3~4È¸ ¹İº¹ÇÏ¸é ÃæºĞÈ÷ ±Í¿©¿î µğÅ×ÀÏÀÌ ³ª¿É´Ï´Ù)
+    // 2. í”„ë™íƒˆ ë°˜ë³µ (3~4íšŒ ë°˜ë³µí•˜ë©´ ì¶©ë¶„íˆ ê·€ì—¬ìš´ ë””í…Œì¼ì´ ë‚˜ì˜µë‹ˆë‹¤)
     for (float i = 0.0; i < 3.0; i++) {
-        // °ø°£À» °è¼Ó ÂÉ°³°í ¹İº¹½ÃÅ´ (ÇÙ½É ÇÁ·¢Å» ·ÎÁ÷)
+        // ê³µê°„ì„ ê³„ì† ìª¼ê°œê³  ë°˜ë³µì‹œí‚´ (í•µì‹¬ í”„ë™íƒˆ ë¡œì§)
         uv = fract(uv * 1.5) - 0.5;
         
-        // Áß½ÉÀ¸·ÎºÎÅÍÀÇ °Å¸® °è»ê
+        // ì¤‘ì‹¬ìœ¼ë¡œë¶€í„°ì˜ ê±°ë¦¬ ê³„ì‚°
         float d = length(uv) * exp(-length(v_TPos - 0.5));
         
-        // ±Í¿©¿î ÆÄµ¿ÀÇ »ö»ó (ºĞÈ«, ¹ÎÆ®, º¸¶ó °è¿­)
+        // ê·€ì—¬ìš´ íŒŒë™ì˜ ìƒ‰ìƒ (ë¶„í™, ë¯¼íŠ¸, ë³´ë¼ ê³„ì—´)
         vec3 col = 0.5 + 0.5 * cos(u_Time + uv.xyx + vec3(0, 2, 4));
         
-        // Á¦°øÇØÁÖ½Å CircleSinÀÇ ÆÄµ¿ ·ÎÁ÷À» º¯ÇüÇØ¼­ Àû¿ë
-        // ¸ù±Û¸ù±ÛÇÑ ´À³¦À» À§ÇØ sin °ªÀ» ºÎµå·´°Ô Á¶Àı
+        // ì œê³µí•´ì£¼ì‹  CircleSinì˜ íŒŒë™ ë¡œì§ì„ ë³€í˜•í•´ì„œ ì ìš©
+        // ëª½ê¸€ëª½ê¸€í•œ ëŠë‚Œì„ ìœ„í•´ sin ê°’ì„ ë¶€ë“œëŸ½ê²Œ ì¡°ì ˆ
         d = sin(d * 8.0 + u_Time) / 8.0;
         d = abs(d);
         
-        // ÆÄµ¿À» ¾ÆÁÖ ¾ã°í ¼±¸íÇÏ°Ô (pow »ç¿ë)
+        // íŒŒë™ì„ ì•„ì£¼ ì–‡ê³  ì„ ëª…í•˜ê²Œ (pow ì‚¬ìš©)
         d = pow(0.01 / d, 1.2);
         
         finalColor += col * d;
@@ -108,54 +108,54 @@ void CuteFractal()
     FragColor = vec4(finalColor, 1.0);
 }
 
-// ¹ßÀÚ±¹ ¸ğ¾çÀÇ °Å¸®¸¦ °è»êÇÏ´Â ÇÔ¼ö
+// ë°œìêµ­ ëª¨ì–‘ì˜ ê±°ë¦¬ë¥¼ ê³„ì‚°í•˜ëŠ” í•¨ìˆ˜
 float getFootprintDistance(vec2 center, vec2 uv)
 {
     vec2 p = uv - center;
     
-    // 1. ¸ŞÀÎ ¹ß¹Ù´Ú (¾à°£ Å¸¿øÇü)
+    // 1. ë©”ì¸ ë°œë°”ë‹¥ (ì•½ê°„ íƒ€ì›í˜•)
     float mainPad = length(p * vec2(1.0, 1.2)) - 0.04;
     
-    // 2. ¹ß°¡¶ô 3°³ (ÀÛÀº ¿øµé)
+    // 2. ë°œê°€ë½ 3ê°œ (ì‘ì€ ì›ë“¤)
     float toe1 = length(p - vec2(-0.03, 0.05)) - 0.015;
     float toe2 = length(p - vec2( 0.0,  0.07)) - 0.015;
     float toe3 = length(p - vec2( 0.03, 0.05)) - 0.015;
     
-    // ¸ğµç ¸ğ¾ç Áß °¡Àå °¡±î¿î °Å¸®¸¦ ¼±ÅÃ (ÇÕÄ¡±â)
+    // ëª¨ë“  ëª¨ì–‘ ì¤‘ ê°€ì¥ ê°€ê¹Œìš´ ê±°ë¦¬ë¥¼ ì„ íƒ (í•©ì¹˜ê¸°)
     return min(mainPad, min(toe1, min(toe2, toe3)));
 }
 
 void FootprintDrop()
 {
     float accum = 0;
-    for(int i = 0; i < 50; ++i) { // ¼º´ÉÀ» À§ÇØ ·çÇÁ È½¼ö Á¶Àı (Å×½ºÆ®¿ë)
+    for(int i = 0; i < 50; ++i) { // ì„±ëŠ¥ì„ ìœ„í•´ ë£¨í”„ íšŸìˆ˜ ì¡°ì ˆ (í…ŒìŠ¤íŠ¸ìš©)
         float lifeTime = u_DropInfo[i].w;
         float startTime = u_DropInfo[i].z;
         float newTime = u_Time - startTime;
         
         if(newTime > 0) {
-            float progress = fract(newTime / lifeTime); // 0~1 ¹İº¹
+            float progress = fract(newTime / lifeTime); // 0~1 ë°˜ë³µ
             float fade = 1.0 - progress;
             
             vec2 center = u_DropInfo[i].xy;
             
-            // ¹ßÀÚ±¹ ¸ğ¾ç°úÀÇ °Å¸® °è»ê
+            // ë°œìêµ­ ëª¨ì–‘ê³¼ì˜ ê±°ë¦¬ ê³„ì‚°
             float d = getFootprintDistance(center, v_TPos);
             
-            // ÆÄµ¿ÀÌ ¹ÛÀ¸·Î ÆÛÁ®³ª°¡´Â ¹üÀ§
+            // íŒŒë™ì´ ë°–ìœ¼ë¡œ í¼ì ¸ë‚˜ê°€ëŠ” ë²”ìœ„
             float range = progress * 0.15;
             
-            // ¹ßÀÚ±¹ Å×µÎ¸® ±ÙÃ³¿¡¼­¸¸ ºû³ª°Ô ¼³Á¤
-            // d°¡ 0¿¡ °¡±î¿ï¼ö·Ï(¹ßÀÚ±¹ ¾ÈÂÊ), ±×¸®°í range¿Í ºñ½ÁÇÒ¼ö·Ï °­ÇØÁü
+            // ë°œìêµ­ í…Œë‘ë¦¬ ê·¼ì²˜ì—ì„œë§Œ ë¹›ë‚˜ê²Œ ì„¤ì •
+            // dê°€ 0ì— ê°€ê¹Œìš¸ìˆ˜ë¡(ë°œìêµ­ ì•ˆìª½), ê·¸ë¦¬ê³  rangeì™€ ë¹„ìŠ·í• ìˆ˜ë¡ ê°•í•´ì§
             float edge = 1.0 - smoothstep(0.0, 0.02, abs(d - range * 0.2));
             
-            // ±âÁ¸ÀÇ sin ÆÄµ¿ ´À³¦ Ãß°¡
+            // ê¸°ì¡´ì˜ sin íŒŒë™ ëŠë‚Œ ì¶”ê°€
             float ripple = pow(abs(sin(d * 100.0 - progress * 20.0)), 8.0);
             
             accum += edge * ripple * fade;
         }
     }
-    // ¹ßÀÚ±¹ÀÌ´Ï±î ¾à°£ µû¶æÇÑ »ö°¨ÀÌ³ª Èò»öÀ¸·Î Ãâ·Â
+    // ë°œìêµ­ì´ë‹ˆê¹Œ ì•½ê°„ ë”°ëœ»í•œ ìƒ‰ê°ì´ë‚˜ í°ìƒ‰ìœ¼ë¡œ ì¶œë ¥
     FragColor = vec4(accum * vec3(1.0, 0.8, 0.9), 1.0);
 }
 
@@ -189,7 +189,7 @@ void Flame()
     float sinValue = newY * amp * (((sin(sinInput) + 1) / 2) - .5) + 0.5;  // 0 -> 0.5
 
     float fWidth = 0.0;
-    float width = 0.5 * mix(1, fWidth, newY);   // ¿¬±â => mix(fWidth, 1, newY);
+    float width = 0.5 * mix(1, fWidth, newY);   // ì—°ê¸° => mix(fWidth, 1, newY);
     float grey = 0;
 
     if(v_TPos.x < sinValue + width / 2&& v_TPos.x > sinValue - width / 2) {
@@ -250,8 +250,27 @@ void TextureQ3()
     FragColor = texture(u_RGBTex, newTex);
 }
 
+// ë²½ëŒ
+void TextureQ4()
+{
+    // texture ê°œìˆ˜
+    float resolX = 5;
+    float resolY = 3;
+    float shear = 0.5 * u_Time;
+
+    //float offsetX = shear + shear * floor(v_TPos.y * resolY);
+    float offsetX = fract(ceil(v_TPos.y * resolY) * shear);
+    float offsetY = 0;
+
+    float tx = fract(v_TPos.x * resolX + offsetX);
+    float ty = fract(v_TPos.y * resolY + offsetY);
+
+    vec2 newTex = vec2(tx, ty);
+    FragColor = texture(u_RGBTex, newTex);
+}
+
 void main()
 {
     //TextureSampling();
-    TextureQ3();
+    TextureQ4();
 }
