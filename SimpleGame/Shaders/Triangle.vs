@@ -7,13 +7,17 @@ in vec2 a_Vel;
 in float a_RV;
 in float a_RV1;
 in float a_RV2;
+in vec2 a_Tex;
+in vec3 a_RGB;
 
 out float v_Grey;
+out vec3 v_Color;
+out vec2 v_Tex;
 
 const float c_PI = 3.141592;
 const float c_GV = -9.8;
 
-void Sin0()	// ½ÃÇè ¹®Á¦
+void Sin0()	// ì‹œí—˜ ë¬¸ì œ
 {
 	float startTime = a_RV1 * 2;
 	float newTime = u_Time - startTime;
@@ -35,7 +39,7 @@ void Sin0()	// ½ÃÇè ¹®Á¦
 
 void foundation()
 {
-// 1. »ý¸í ÁÖ±â ¼³Á¤ (ºÐ¼ö´Â ¾à 1.5ÃÊ Á¤µµ À¯Áö)
+// 1. ìƒëª… ì£¼ê¸° ì„¤ì • (ë¶„ìˆ˜ëŠ” ì•½ 1.5ì´ˆ ì •ë„ ìœ ì§€)
     float lifeDuration = 1.5;
     float startTime = a_RV1 * 2.0; 
     float newTime = u_Time - startTime;
@@ -44,26 +48,26 @@ void foundation()
         float t = mod(newTime, lifeDuration);
         float normalizedLife = t / lifeDuration; // 0.0 ~ 1.0
 
-        // 2. ¹°¸® ¿¬»ê: À§·Î ¼Ú±¸Ä¡´Â Èû (Initial Velocity)
-        // a_RV1À» ÀÌ¿ëÇØ ¹°ÁÙ±â¸¶´Ù ³ôÀÌ¸¦ ´Ù¸£°Ô ¼³Á¤
+        // 2. ë¬¼ë¦¬ ì—°ì‚°: ìœ„ë¡œ ì†Ÿêµ¬ì¹˜ëŠ” íž˜ (Initial Velocity)
+        // a_RV1ì„ ì´ìš©í•´ ë¬¼ì¤„ê¸°ë§ˆë‹¤ ë†’ì´ë¥¼ ë‹¤ë¥´ê²Œ ì„¤ì •
         float launchVelocity = 2.5 + a_RV1 * 1.5;
         
-        // y = v0 * t + 0.5 * g * t^2 (±âº» Æ÷¹°¼±)
+        // y = v0 * t + 0.5 * g * t^2 (ê¸°ë³¸ í¬ë¬¼ì„ )
         float posY = (launchVelocity * t) + (0.5 * c_GV * t * t);
         
-        // 3. »çÀÎÆÄ¸¦ ÀÌ¿ëÇÑ ¹Ù¶÷ È¿°ú (Swaying)
-        // À§·Î °¥¼ö·Ï ¹Ù¶÷ÀÇ ¿µÇâÀ» ¸¹ÀÌ ¹Þ¾Æ ´õ Å©°Ô Èçµé¸²
+        // 3. ì‚¬ì¸íŒŒë¥¼ ì´ìš©í•œ ë°”ëžŒ íš¨ê³¼ (Swaying)
+        // ìœ„ë¡œ ê°ˆìˆ˜ë¡ ë°”ëžŒì˜ ì˜í–¥ì„ ë§Žì´ ë°›ì•„ ë” í¬ê²Œ í”ë“¤ë¦¼
         float windStrength = 0.2 * a_RV; 
         float sway = sin(u_Time * 2.0 + a_RV1 * c_PI) * windStrength * t;
         
-        // xÃàÀº ±âº» ÆÛÁü(a_RV) + ¹Ù¶÷¿¡ ÀÇÇÑ Èçµé¸²(sway)
+        // xì¶•ì€ ê¸°ë³¸ í¼ì§(a_RV) + ë°”ëžŒì— ì˜í•œ í”ë“¤ë¦¼(sway)
         float posX = (a_RV - 0.5) * 0.5 * t + sway;
 
-        // 4. ÀÔÀÚ Å©±â º¯È­
-        // ¹°¹æ¿ïÀÌ Á¤Á¡¿¡¼­ ¶³¾îÁú ¶§ °ø±â Áß¿¡¼­ Èð¾îÁö¸ç ÀÛ¾ÆÁü
+        // 4. ìž…ìž í¬ê¸° ë³€í™”
+        // ë¬¼ë°©ìš¸ì´ ì •ì ì—ì„œ ë–¨ì–´ì§ˆ ë•Œ ê³µê¸° ì¤‘ì—ì„œ í©ì–´ì§€ë©° ìž‘ì•„ì§
         float size = a_RV2 * 0.2 * (1.0 - normalizedLife * 0.5);
 
-        // 5. ÃÖÁ¾ ÁÂÇ¥ °è»ê
+        // 5. ìµœì¢… ì¢Œí‘œ ê³„ì‚°
         vec4 newPosition;
         newPosition.x = (a_Position.x * size) + posX;
         newPosition.y = (a_Position.y * size) + posY;
@@ -73,7 +77,7 @@ void foundation()
         gl_Position = newPosition;
     }
     else {
-        gl_Position = vec4(1000.0, 0.0, 0.0, 1.0); // È­¸é ¹Û
+        gl_Position = vec4(1000.0, 0.0, 0.0, 1.0); // í™”ë©´ ë°–
     }
 }
 
@@ -128,8 +132,8 @@ vec4 Falling(vec3 pos)
 	if(newTime > 0) {
 		float lifeScale = 2;
 		float lifeTime = 0.5 + a_RV2 * lifeScale;
-		float t = lifeTime * fract(newTime / lifeTime); // 0~lifeTime ±¸°£ ¹Ýº¹
-		// float t = mod(newTime, lifeTime); // 0~lifeTime ±¸°£ ¹Ýº¹
+		float t = lifeTime * fract(newTime / lifeTime); // 0~lifeTime êµ¬ê°„ ë°˜ë³µ
+		// float t = mod(newTime, lifeTime); // 0~lifeTime êµ¬ê°„ ë°˜ë³µ
 		float tt = t*t;
 
 		newPosition.x = pos.x + t * a_Vel.x;
@@ -144,7 +148,30 @@ vec4 Falling(vec3 pos)
 	return newPosition;
 }
 
+void Shape()
+{
+	float lifeTime = 0.5 + 5.0 * a_RV;
+	float startTime = 5.0 * a_RV1;
+
+	float newTime = u_Time - startTime;
+	if(newTime > 0) {
+		float t = fract(newTime/lifeTime) * lifeTime;
+		float tt = t*t;
+
+		float newX = a_Position.x + a_Vel.x * t * 0.1;
+		float newY = a_Position.y + a_Vel.y * t* 0.1;
+
+		gl_Position = vec4(newX, newY, 0, 1);
+	}
+	else {
+		gl_Position = vec4(-10000, 0, 0, 1);
+	}
+
+	v_Color = a_RGB;
+	v_Tex = a_Tex;
+}
+
 void main()
 {
-	Sin0();
+	Shape();
 }
