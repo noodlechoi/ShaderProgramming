@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <cstdlib>
@@ -17,6 +17,7 @@ public:
 	void DrawSolidRect(float x, float y, float z, float size, float r, float g, float b, float a);
 	void DrawTriangle();
 	void DrawFS();
+	void DrawDummy();
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -27,6 +28,7 @@ private:
 	void CreateVertexBufferObjects();
 	void CreateParticle(const int num);
 	void GetGLPosition(float x, float y, float *newX, float *newY);
+	void GenDummyMesh(int x, int y);
 
 	bool m_Initialized = false;
 	
@@ -36,12 +38,15 @@ private:
 	GLuint m_VBORect = 0;
 	GLuint m_SolidRectShader = 0;
 	GLuint m_FSShader = 0;
+	GLuint m_DummyShader = 0;
 
 	GLuint m_VBOTriangle = 0;
 	GLuint m_VBOFS = 0;
 	GLuint m_VBOParticle = 0;
+	GLuint m_VBO_DummyMesh = 0;
 	GLuint m_TriangleShader = 0;
 	int m_ParticleCount = 0;
+	int m_DummyVertexCount = 0;
 
 	// RainDrop
 	float m_DropPoints[1000 * 4];
