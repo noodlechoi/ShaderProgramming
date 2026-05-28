@@ -162,9 +162,11 @@ void Shape()
 		float newY = a_Position.y + a_Vel.y * t* 0.1;
 
 		gl_Position = vec4(newX, newY, 0, 1);
+		v_Grey = 1-fract(newTime/lifeTime);
 	}
 	else {
 		gl_Position = vec4(-10000, 0, 0, 1);
+		v_Grey = 1;
 	}
 
 	v_Color = a_RGB;
