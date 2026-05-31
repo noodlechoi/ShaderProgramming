@@ -31,6 +31,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_NumsTexture = CreatePngTexture("./Textures/numbers.png", GL_NEAREST);
 	m_ParticleTexture = CreatePngTexture("./Textures/particle.png", GL_NEAREST);
 	m_ParticleSpriteTexture = CreatePngTexture("./Textures/explosion.png", GL_NEAREST);
+	m_BaeTexture = CreatePngTexture("./Textures/bae.png", GL_NEAREST);
 	for (int i = 0; i < 10; ++i) {
 		std::string path{ "./Textures/" + std::to_string(i) + ".png" };
 		m_NumTexture[i] = CreatePngTexture((char*)path.c_str(), GL_NEAREST);
@@ -40,7 +41,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	CreateVertexBufferObjects();
 
 	// Create Dummy
-	GenDummyMesh(16, 16);
+	GenDummyMesh(200, 200);
 
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
@@ -509,12 +510,20 @@ void Renderer::DrawFS()
 
 void Renderer::DrawDummy()
 {
-	g_time += 0.0005f;
+	g_time += 0.005f;
 
 	glUseProgram(m_DummyShader);
 
 	int uTime = glGetUniformLocation(m_DummyShader, "u_Time");
 	glUniform1f(uTime, g_time);
+
+	int uBaeTex = glGetUniformLocation(m_DummyShader, "u_BaeTex");
+	glUniform1i(uBaeTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_BaeTexture);
+
+	int uPoints = glGetUniformLocation(m_DummyShader, "u_DropInfo");
+	glUniform4fv(uPoints, 1000, m_DropPoints);
 
 	int attribPosition = glGetAttribLocation(m_DummyShader, "a_Pos");
 	glEnableVertexAttribArray(attribPosition);

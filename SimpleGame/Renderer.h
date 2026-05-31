@@ -57,5 +57,6 @@ private:
 	GLuint m_NumsTexture = 0;
 	GLuint m_ParticleTexture = 0;
 	GLuint m_ParticleSpriteTexture = 0;
+	GLuint m_BaeTexture = 0;
 };
 
