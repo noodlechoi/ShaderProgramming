@@ -18,9 +18,12 @@ public:
 	void DrawTriangle();
 	void DrawFS();
 	void DrawDummy();
+	void DrawDummy_FBO();
+	void DrawAll_FBO();
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
+	void GenFBOs();
 	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
 	bool ReadFile(char* filename, std::string *target);
 	void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
@@ -29,6 +32,7 @@ private:
 	void CreateParticle(const int num);
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 	void GenDummyMesh(int x, int y);
+	void DrawTexture(GLuint texID, float x, float y, float scale, bool flip);
 
 	bool m_Initialized = false;
 	
@@ -39,11 +43,13 @@ private:
 	GLuint m_SolidRectShader = 0;
 	GLuint m_FSShader = 0;
 	GLuint m_DummyShader = 0;
+	GLuint m_TextureShader = 0;
 
 	GLuint m_VBOTriangle = 0;
 	GLuint m_VBOFS = 0;
 	GLuint m_VBOParticle = 0;
 	GLuint m_VBO_DummyMesh = 0;
+	GLuint m_VBO_Texture = 0;
 	GLuint m_TriangleShader = 0;
 	int m_ParticleCount = 0;
 	int m_DummyVertexCount = 0;
@@ -58,5 +64,10 @@ private:
 	GLuint m_ParticleTexture = 0;
 	GLuint m_ParticleSpriteTexture = 0;
 	GLuint m_BaeTexture = 0;
+
+	// FBO
+	GLuint m_FBO[3];
+	GLuint m_FBO_Texture[3];
+
 };
 
