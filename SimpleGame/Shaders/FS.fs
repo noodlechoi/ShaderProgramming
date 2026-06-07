@@ -1,6 +1,9 @@
 #version 330
 
 layout(location=0) out vec4 FragColor;
+layout(location=1) out vec4 FragColor1;
+layout(location=2) out vec4 FragColor2;
+
 uniform sampler2D u_RGBTex;
 uniform sampler2D u_CurrNumTex;
 uniform sampler2D u_NumsTex;
@@ -20,7 +23,7 @@ void Colorful()
 		FragColor = vec4(v_TPos, 0, 1);
 }
 
-void LinePattern()
+vec4 LinePattern()
 {
 	float lineCountH = 10;
 	float lineCountV = 2;
@@ -31,7 +34,7 @@ void LinePattern()
 	float per = -0.5 * c_PI;
 	float grey = pow(abs(sin((v_TPos.y*2*c_PI + per) * lineCountH)), lineWidth);
 	grey += pow(abs(sin((v_TPos.x*2*c_PI + per) * lineCountV)), lineWidth);
-	FragColor = vec4(grey);
+	return vec4(grey);
 }
 
 void Circle()
@@ -56,7 +59,7 @@ void CircleSin()    // 퍼져나가는 이미지에 사용(파동, 레이더)
 	FragColor = vec4(pow(value,	16));
 }
 
-void RainDrop()
+vec4 RainDrop()
 {
 	float accum = 0;
 	for(int i = 0; i < 1000; ++i) {
@@ -77,7 +80,7 @@ void RainDrop()
 			accum += value * fade * oneMinus;
 		}
 	}
-	FragColor = vec4(accum);
+	return vec4(accum);
 }
 
 void CuteFractal()
@@ -162,7 +165,7 @@ void FootprintDrop()
     FragColor = vec4(accum * vec3(1.0, 0.8, 0.9), 1.0);
 }
 
-void Flag()
+vec4 Flag()
 {
     float amp = 0.5;
     float speed = 4;
@@ -177,10 +180,9 @@ void Flag()
         grey = 1;
     } else {
         grey = 0;
-        discard;
     }
 
-    FragColor = vec4(grey);
+    return vec4(grey);
 }
 
 void Flame()
@@ -299,5 +301,8 @@ void Nums()
 void main()
 {
     //TextureSampling();
-    Nums();
+    FragColor = RainDrop();
+    FragColor1 = Flag();
+    FragColor2 = Flag();
+    FragColor2 = LinePattern();
 }
