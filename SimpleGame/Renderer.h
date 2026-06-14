@@ -24,6 +24,7 @@ public:
 	void DrawMultipleRenderTarget();
 	void DrawGaussianBlur(GLuint texID, GLuint targetFBOID, GLuint shader);
 	void DrawAccumResult(GLuint texOri, GLuint texBlurred, bool flip);
+	void DrawFullScreenColor(float r, float g, float b, float a);
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	void GenFBOs();
@@ -86,5 +87,8 @@ private:
 	GLuint m_BlurV_Shader = 0;
 
 	GLuint m_AccumShader = 0;
+
+	// Fill Full Screen
+	GLuint m_FullScreenShader = 0;
 };
 

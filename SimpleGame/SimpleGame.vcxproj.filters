@@ -94,5 +94,11 @@
     <None Include="Shaders\Accum.vs">
       <Filter>소스 파일\Shaders</Filter>
     </None>
+    <None Include="Shaders\test.fs">
+      <Filter>소스 파일\Shaders</Filter>
+    </None>
+    <None Include="Shaders\test.vs">
+      <Filter>소스 파일\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

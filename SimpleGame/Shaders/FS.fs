@@ -1,4 +1,4 @@
-#version 330
+﻿#version 330
 
 layout(location=0) out vec4 FragColor;
 layout(location=1) out vec4 FragColor1;
@@ -301,7 +301,8 @@ void Nums()
 void main()
 {
     //TextureSampling();
-    FragColor = RainDrop();
+    CircleSin();
+    //FragColor = CircleSin();
     FragColor1 = Flag();
     FragColor2 = Flag();
     FragColor2 = LinePattern();

@@ -1,4 +1,4 @@
-#version 330
+﻿#version 330
 
 uniform float u_Time;
 in vec3 a_Position;
@@ -17,6 +17,45 @@ out vec2 v_Tex;
 const float c_PI = 3.141592;
 const float c_GV = -9.8;
 
+void Ex1()
+{
+	vec4 pos = vec4(0, 0, 0, 1);
+	float radius = ceil(a_RV1 * 5.0)/ 5.0;	// 단계별로 동심원
+	pos.x = a_Position.x + radius * sin(a_RV*2*c_PI);
+	pos.y = a_Position.y + radius * cos(a_RV*2*c_PI);
+
+	v_Color = vec3(0);
+	gl_Position = vec4(pos);
+}
+
+void Ex2()
+{
+	vec4 pos = vec4(0, 0, 0, 1);
+	float trans = ceil(a_RV1 * 5.0)/ 5.0;
+	pos.x = a_Position.x + (a_RV*2.0 - 1.0);
+	pos.y = a_Position.y + trans + 0.2 * sin(a_RV*2.0 *c_PI);
+
+	v_Color = vec3(0);
+	gl_Position = vec4(pos);
+}
+
+void Ex3()
+{
+	vec4 pos = vec4(0, 0, 0, 1);
+	float t = fract(u_Time/2.0) * 2.0;
+	pos.x = a_Position.x + (t - 1.0);
+	pos.y = a_Position.y;
+
+	v_Color = vec3(0);
+	gl_Position = vec4(pos);
+}
+
+void main()
+{
+	Ex3();
+}
+
+/*
 void Sin0()	// 시험 문제
 {
 	float startTime = a_RV1 * 2;
@@ -97,7 +136,6 @@ void Sin2()
 	newPosition = vec4(a_Position.x + t + offset, a_Position.y + 0.5 * sin(t * 3.141592), a_Position.z, 1);
 	gl_Position = newPosition;
 }
-/*
 void Circle()
 {
 	float offset = u_Time * 2 * 3.141592;
@@ -106,7 +144,6 @@ void Circle()
 	newPosition = vec4(a_Position.x + r * cos(offset) , a_Position.y + r * sin(offset), a_Position.z, 1);
 	gl_Position = newPosition;
 }
-*/
 
 // psuedo random generator
 float random(float n) {
@@ -172,8 +209,4 @@ void Shape()
 	v_Color = a_RGB;
 	v_Tex = a_Tex;
 }
-
-void main()
-{
-	Shape();
-}
+*/

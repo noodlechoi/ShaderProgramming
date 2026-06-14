@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright 2022 Lee Taek Hee (Tech University of Korea)
 
 This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,12 @@ Renderer *g_Renderer = NULL;
 
 void RenderScene(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Renderer Test
-	g_Renderer->DrawTriangle_Bloom();
+	g_Renderer->DrawFullScreenColor(1, 1, 1, 0.2);
+	g_Renderer->DrawFS();
 
 	glutSwapBuffers();
 }
