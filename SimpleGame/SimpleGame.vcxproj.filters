@@ -88,5 +88,11 @@
     <None Include="Shaders\BloomV.fs">
       <Filter>소스 파일\Shaders</Filter>
     </None>
+    <None Include="Shaders\Accum.fs">
+      <Filter>소스 파일\Shaders</Filter>
+    </None>
+    <None Include="Shaders\Accum.vs">
+      <Filter>소스 파일\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Renderer.h"
 #include "LoadPng.h"
 #include <assert.h>
@@ -28,6 +28,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_TextureShader = CompileShaders("./Shaders/Texture.vs", "./Shaders/Texture.fs");
 	m_BlurH_Shader = CompileShaders("./Shaders/Bloom.vs", "./Shaders/BloomH.fs");
 	m_BlurV_Shader = CompileShaders("./Shaders/Bloom.vs", "./Shaders/BloomV.fs");
+	m_AccumShader = CompileShaders("./Shaders/Accum.vs", "./Shaders/Accum.fs");
 	
 	// Load Texture
 	m_RgbTexture = CreatePngTexture("./Textures/rgb.png", GL_NEAREST);
@@ -754,23 +755,24 @@ void Renderer::DrawTriangle_Bloom()
 	DrawTriangle();
 
 	DrawGaussianBlur(m_MRT_HDR_FBO_High_Texture, m_PingpongFBO[0], m_BlurH_Shader);
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		DrawGaussianBlur(m_PingpongTexture[0], m_PingpongFBO[1], m_BlurV_Shader);
 		DrawGaussianBlur(m_PingpongTexture[1], m_PingpongFBO[0], m_BlurH_Shader);
 	}
-
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, 1024, 1024);
 	GLenum ResetDrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 	glDrawBuffers(1, ResetDrawBuffers);
 
-	DrawTexture(m_MRT_HDR_FBO_Low_Texture, -0.5, 0.5, 0.5, false);
-	DrawTexture(m_MRT_HDR_FBO_High_Texture, 0.5, 0.5, 0.5, false);
+	DrawAccumResult(m_MRT_HDR_FBO_Low_Texture, m_PingpongTexture[0], false);
 
-	DrawTexture(m_PingpongTexture[0], -0.5, -0.5, 0.5, true);
-	DrawTexture(m_PingpongTexture[1], 0.5, -0.5, 0.5, false);
+	DrawTexture(m_MRT_HDR_FBO_Low_Texture, -0.5, -0.8, 0.2, false);
+	//DrawTexture(m_MRT_HDR_FBO_High_Texture, 0.5, 0.5, 0.5, false);
+
+	DrawTexture(m_PingpongTexture[0], 0.5, -0.8, 0.2, true);
+	//DrawTexture(m_PingpongTexture[1], 0.5, -0.5, 0.5, false);
 }
 
 void Renderer::DrawGaussianBlur(GLuint texID, GLuint targetFBOID, GLuint shader)
@@ -791,6 +793,33 @@ void Renderer::DrawGaussianBlur(GLuint texID, GLuint targetFBOID, GLuint shader)
 	glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::DrawAccumResult(GLuint texOri, GLuint texBlurred, bool flip)
+{
+	int shader = m_AccumShader;
+	glUseProgram(shader);
+
+	int uFlip = glGetUniformLocation(shader, "u_Flip");
+	glUniform1i(uFlip, flip);
+	int uTex = glGetUniformLocation(shader, "u_Tex");
+	glUniform1i(uTex, 0);
+	int uTexBlurred = glGetUniformLocation(shader, "u_TexBlurred");
+	glUniform1i(uTexBlurred, 1);
+	int uExposure = glGetUniformLocation(shader, "u_Exposure");
+	glUniform1i(uExposure, 2);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texOri);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texBlurred);
+
+	int aPos = glGetAttribLocation(shader, "a_Pos");
+	glEnableVertexAttribArray(aPos);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO_Texture);
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void Renderer::DrawTexture(GLuint texID, float x, float y, float scale, bool flip)

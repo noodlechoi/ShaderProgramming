@@ -1,4 +1,4 @@
-#version 330
+﻿#version 330
 
 layout(location=0) out vec4 FragColor;
 layout(location=1) out vec4 FragColor1;
@@ -49,7 +49,7 @@ void CircleShapeHDR()
 	vec4 newColor;
 	float d = distance(vec2(0.5,0.5), v_Tex);
 	if(d < 0.5) {
-		newColor = vec4(v_Color * 1.5, clamp(0.5 - d, 0, 0.5) * 2);
+		newColor = vec4(v_Color * 5, clamp(0.5 - d, 0, 0.5) * 2);
 	}
 	else
 		newColor = vec4(0);

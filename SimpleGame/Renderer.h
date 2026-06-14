@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <cstdlib>
@@ -23,7 +23,7 @@ public:
 	void DrawAll_FBO();
 	void DrawMultipleRenderTarget();
 	void DrawGaussianBlur(GLuint texID, GLuint targetFBOID, GLuint shader);
-
+	void DrawAccumResult(GLuint texOri, GLuint texBlurred, bool flip);
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	void GenFBOs();
@@ -84,5 +84,7 @@ private:
 	GLuint m_PingpongTexture[2];
 	GLuint m_BlurH_Shader = 0;
 	GLuint m_BlurV_Shader = 0;
+
+	GLuint m_AccumShader = 0;
 };
 

@@ -172,6 +172,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Accum.fs" />
+    <None Include="Shaders\Accum.vs" />
     <None Include="Shaders\BloomH.fs" />
     <None Include="Shaders\Bloom.vs" />
     <None Include="Shaders\BloomV.fs" />
